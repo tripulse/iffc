@@ -14,7 +14,7 @@
 //! # Examples
 //! To decode all the chunks avialable from the given reader:
 //! ```
-//! use iff::Decoder;
+//! use iffc::Decoder;
 //! 
 //! fn main() {
 //!     let inp = std::io::Cursor::new(b"RIFF\x04\x00\x00\x00WAVE");
@@ -27,7 +27,7 @@
 //! 
 //! To encode chunks into a given writer:
 //! ```
-//! use iff::{Encoder, Chunk};
+//! use iffc::{Encoder, Chunk};
 //! 
 //! fn main() {
 //!     let out = std::io::Cursor::new(Vec::new());
