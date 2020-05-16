@@ -1,0 +1,11 @@
+[package]
+name        = "iff"
+description = "IFF chunk encoder and decoder."
+readme      = "README.md"
+version     = "0.1.0"
+categories  = ["multimedia", "parsing"]
+keywords    = ["parser", "riff", "iff", "chunk"]
+authors     = ["tripulse"]
+license     = "ISC"
+edition     = "2018"
+exclude     = ["target/**/*", "*.lock", "*.yml"]
