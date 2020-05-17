@@ -29,7 +29,7 @@
 //!     let out = std::io::Cursor::new(Vec::new());
 //!     let deparser = Encoder::new(Box::new(out));
 //! 
-//!     deparser << Chunk(*b"RIFF", b"WAVE".to_vec());
+//!     deparser << Chunk(*b"RIFF", Box::new(*b"WAVE"));
 //! }
 //! ```
 use std::io::{Read, Write, IoSlice, IoSliceMut};
@@ -42,7 +42,7 @@ use std::ops::{Shl};
 /// `0` — four-byte identity of chunk.
 /// `1` — byte-data encapsulated inside it.
 #[derive(Debug, Eq, PartialEq)]
-pub struct Chunk(pub [u8; 4], pub Vec<u8>);
+pub struct Chunk(pub [u8; 4], pub Box<[u8]>);
 
 /// A structure which wraps a reader and parses IFF chunks and
 /// behaves like an iterator which yields `IFFChunk` until
@@ -79,7 +79,7 @@ impl Iterator for Decoder {
             Err(_) => { return None }
         };
 
-        Some(Chunk(id, data))
+        Some(Chunk(id, data.into_boxed_slice()))
     }
 }
 
@@ -93,7 +93,7 @@ impl Shl<Chunk> for Encoder {
             IoSlice::new(&chunk.0),
             IoSlice::new(&(chunk.1.len() as u32)
                             .to_le_bytes()[..]),
-            IoSlice::new(chunk.1.as_slice())
+            IoSlice::new(&chunk.1)
         ]) { Ok(_) => Some(Self(sel.0)),
              Err(_) => None }
     }
