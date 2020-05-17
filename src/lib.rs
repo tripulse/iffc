@@ -1,15 +1,11 @@
 //! IFF is a binary-interchange format developed by Electronic Arts
 //! for tagging binary data with a meaning. This file is made of out
 //! of segments referred to as so called "chunks". This format is used
-//! for mainly storing multimedia, eg. audio: WAVE, video: AVI, midi:
-//! RMI, images: TIFF.
+//! for mainly storing multimedia, eg. audio, video, midi, images.
 //! 
 //! This crate provides data-structures and wrappers to manipulate this
-//! format quite easily by reading or writing into file-streams.
-//! 
-//! Decoding is done with iterators and Encoding is done with a fancy
-//! operator: `<<` shift left. Some basic syntax to work this library
-//! is shown below.
+//! format quite easily by reading and decoding or writing and encoding
+//! from or into file-streams.
 //! 
 //! # Examples
 //! To decode all the chunks avialable from the given reader:
