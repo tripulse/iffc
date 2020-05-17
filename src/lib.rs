@@ -14,9 +14,9 @@
 //! 
 //! fn main() {
 //!     let inp = std::io::Cursor::new(b"RIFF\x04\x00\x00\x00WAVE");
-//!     let parser = Decoder(Box::new(inp));
+//!     let parser = Decoder::new(Box::new(inp));
 //! 
-//!     for chk in inp
+//!     for chk in parser
 //!     { println!("{:?}: {}", chk.0, chk.1.len()); }
 //! }
 //! ```
@@ -27,7 +27,7 @@
 //! 
 //! fn main() {
 //!     let out = std::io::Cursor::new(Vec::new());
-//!     let deparser = Encoder(Box::new(out));
+//!     let deparser = Encoder::new(Box::new(out));
 //! 
 //!     deparser << Chunk(*b"RIFF", b"WAVE".to_vec());
 //! }
@@ -48,11 +48,15 @@ pub struct Chunk(pub [u8; 4], pub Vec<u8>);
 /// behaves like an iterator which yields `IFFChunk` until
 /// an entire-chunk can't be constructed.
 pub struct Decoder(Box<dyn Read>);
+impl Decoder
+{ pub fn new(r: Box<dyn Read>) -> Self { Self(r) } }
 
 /// A structure which wraps a writer and writes IFF chunks to it,
 /// by using `<<` (shift-left) with an RHS of type `IFFChunk`, also
 /// that operand can be chained.
 pub struct Encoder(Box<dyn Write>);
+impl Encoder
+{ pub fn new(w: Box<dyn Write>) -> Self { Self(w) } }
 
 impl Iterator for Decoder {
     type Item = Chunk;
