@@ -1,11 +1,9 @@
-//! IFF is a binary-interchange format developed by Electronic Arts
-//! for tagging binary data with a meaning. This file is made of out
-//! of segments referred to as so called "chunks". This format is used
-//! for mainly storing multimedia, eg. audio, video, midi, images.
+//! IFF is a binary-interchange format developed by Electronic Arts for tagging binary data with a meaning.
+//! This file is made of out of segments referred to as so called "chunks". This is used for mainly storing
+//! multimedia, eg. audio, video, midi, images.
 //! 
-//! This crate provides data-structures and wrappers to manipulate this
-//! format quite easily by reading and decoding or writing and encoding
-//! from or into file-streams.
+//! This crate provides data-structures and wrappers to manipulate this format quite easily by reading and
+//! decoding or writing and encoding from or into file-streams.
 //! 
 //! # Examples
 //! To decode all the chunks avialable from the given reader:
@@ -65,17 +63,16 @@ impl Iterator for Decoder {
         let mut id   = [0u8; 4];
         let mut size = [0u8; 4];
 
-        if let Err(_) = self.0.read_vectored(&mut [
+        self.0.read_vectored(&mut [
             IoSliceMut::new(&mut id),
             IoSliceMut::new(&mut size)
-        ]) { return None };
+        ]).ok()?;
 
         let size = u32::from_le_bytes(size) as usize;
         let mut data = vec![0u8; size];
         
         match self.0.read(&mut data) {
-            Ok(s) => if size != s || s == 0
-                     { return None },
+            Ok(s) => if size != s { return None },
             Err(_) => { return None }
         };
 
@@ -85,16 +82,15 @@ impl Iterator for Decoder {
 
 impl Shl<Chunk> for Encoder {
     type Output = Option<Self>;
-
+    
     fn shl(self, chunk: Chunk) -> Option<Self> {
-        let mut sel = self;
-        
-        match sel.0.write_vectored(&[
+        sel.0.write_vectored(&[
             IoSlice::new(&chunk.0),
             IoSlice::new(&(chunk.1.len() as u32)
                             .to_le_bytes()[..]),
             IoSlice::new(&chunk.1)
-        ]) { Ok(_) => Some(Self(sel.0)),
-             Err(_) => None }
+        ]).ok()?;
+        
+        Some(Self(self.0))
     }
 }
